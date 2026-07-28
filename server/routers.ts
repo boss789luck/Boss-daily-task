@@ -1,5 +1,6 @@
 import { COOKIE_NAME } from "@shared/const";
 import { z } from "zod";
+import "./services/googleCalendarSync";
 import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import {
@@ -152,7 +153,7 @@ export const appRouter = router({
       if (insertId) {
         const project = await getProjectById(insertId, ctx.user.id);
         if (project) {
-          autoSyncProject(ctx.user.id, {
+          await autoSyncProject(ctx.user.id, {
             id: project.id,
             name: project.name,
             description: project.description,
@@ -172,7 +173,7 @@ export const appRouter = router({
         // Auto-sync updated project to Google Calendar
         const updated = await import("./db").then(m => m.getProjectById(input.id, ctx.user.id));
         if (updated) {
-          autoSyncProject(ctx.user.id, {
+          await autoSyncProject(ctx.user.id, {
             id: updated.id,
             name: updated.name,
             description: updated.description,
@@ -188,10 +189,9 @@ export const appRouter = router({
       .input(z.object({ id: z.number() }))
       .mutation(async ({ ctx, input }) => {
         // Fetch googleEventId before deleting
-        const project = await import("./db").then(m => m.getProjectById(input.id, ctx.user.id));
+        // const project = await import("./db").then(m => m.getProjectById(input.id, ctx.user.id));
         const result = await deleteProject(input.id, ctx.user.id);
-        // Auto-delete from Google Calendar
-        autoDeleteProject(ctx.user.id, null).catch(() => {});
+        // Auto-delete from Google Calendar (Projects do not have googleEventId yet)
         return result;
       }),
     reorder: protectedProcedure

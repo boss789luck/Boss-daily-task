@@ -198,23 +198,37 @@ export async function generateBookSummary(userId: number, genre: string, dateLab
 
 เขียนให้ละเอียด ลึกซึ้ง เหมือนอ่านหนังสือจริงๆ ไม่ใช่แค่สรุปสั้นๆ`;
 
-  const result = await invokeLLM({
-    messages: [{ role: "user", content: prompt }],
-    maxTokens: 8000,
-  });
+  let result;
+  let lessonsResult;
+  try {
+    result = await invokeLLM({
+      model: "gpt-4o-mini",
+      messages: [{ role: "user", content: prompt }],
+      maxTokens: 8000,
+    });
 
-  const summaryText = extractText(result);
+    const summaryText = extractText(result);
 
-  // Extract key lessons as JSON
-  const lessonsPrompt = `จากหนังสือ "${book.title}" สรุปบทเรียนสำคัญ 6 ข้อ เป็น JSON array ภาษาไทย format: ["บทเรียน 1", "บทเรียน 2", ...] ตอบแค่ JSON เท่านั้น ไม่ต้องมีข้อความอื่น`;
-  const lessonsResult = await invokeLLM({
-    messages: [{ role: "user", content: lessonsPrompt }],
-    maxTokens: 500,
-  });
+    // Extract key lessons as JSON
+    const lessonsPrompt = `จากหนังสือ "${book.title}" สรุปบทเรียนสำคัญ 6 ข้อ เป็น JSON array ภาษาไทย format: ["บทเรียน 1", "บทเรียน 2", ...] ตอบแค่ JSON เท่านั้น ไม่ต้องมีข้อความอื่น`;
+    lessonsResult = await invokeLLM({
+      model: "gpt-4o-mini",
+      messages: [{ role: "user", content: lessonsPrompt }],
+      maxTokens: 500,
+    });
+  } catch (e: any) {
+    if (e.message?.includes("429") || e.message?.includes("RESOURCE_EXHAUSTED") || e.message?.includes("quota")) {
+      throw new TRPCError({
+        code: "TOO_MANY_REQUESTS",
+        message: "โควต้า AI เต็มชั่วคราวครับ 😅 รบกวนรอประมาณ 30-60 วินาที แล้วลองกดสร้างใหม่อีกครั้งนะครับ",
+      });
+    }
+    throw e;
+  }
 
   let keyLessons = "[]";
   try {
-    const raw = extractText(lessonsResult);
+    const raw = extractText(lessonsResult!);
     const match = raw.match(/\[[\s\S]*\]/);
     if (match) {
       JSON.parse(match[0]);
@@ -232,7 +246,7 @@ export async function generateBookSummary(userId: number, genre: string, dateLab
     genre,
     coverEmoji: cfg.emoji,
     coverColor: cfg.color,
-    summary: summaryText,
+    summary: extractText(result!),
     keyLessons,
     weekLabel: dateLabel,
     isRead: false,

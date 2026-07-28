@@ -173,7 +173,7 @@ export default function EisenhowerPage() {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="p-4 md:p-6 max-w-7xl mx-auto">
       <div className="flex items-center gap-2 mb-6">
         <Grid3X3 className="w-5 h-5 text-primary" />
         <div>
@@ -191,7 +191,7 @@ export default function EisenhowerPage() {
           <div className="flex items-center justify-center w-6 flex-shrink-0">
             <div className="text-xs font-semibold text-muted-foreground uppercase tracking-widest -rotate-90 whitespace-nowrap">← Not Important · Important →</div>
           </div>
-          <div className="flex-1 grid grid-cols-2 gap-4">
+          <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
             {QUADRANTS.map((q) => {
               const qTasks = quadrantTasks[q.id as keyof typeof quadrantTasks] ?? [];
               return (

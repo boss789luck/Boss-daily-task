@@ -25,8 +25,6 @@ import { sdk } from "./_core/sdk";
 
 // ─── Google OAuth Config ──────────────────────────────────────────────────────
 import { ENV } from "./_core/env";
-const GOOGLE_CLIENT_ID = ENV.googleClientId;
-const GOOGLE_CLIENT_SECRET = ENV.googleClientSecret;
 const GOOGLE_SCOPES = [
   "https://www.googleapis.com/auth/calendar",
   "https://www.googleapis.com/auth/calendar.events",
@@ -44,20 +42,22 @@ export async function refreshGoogleToken(userId: number): Promise<string | null>
 
   const rows = await db.select().from(calendarSettings).where(eq(calendarSettings.userId, userId)).limit(1);
   const settings = rows[0];
-  if (!settings?.refreshToken) return null;
+  if (!settings) return null;
 
   // Check if token is still valid (5 min buffer)
   if (settings.accessToken && settings.tokenExpiry && settings.tokenExpiry.getTime() > Date.now() + 5 * 60 * 1000) {
     return settings.accessToken;
   }
 
+  if (!settings.refreshToken) return null;
+
   try {
     const resp = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
-        client_id: GOOGLE_CLIENT_ID,
-        client_secret: GOOGLE_CLIENT_SECRET,
+        client_id: ENV.googleClientId,
+        client_secret: ENV.googleClientSecret,
         refresh_token: settings.refreshToken,
         grant_type: "refresh_token",
       }),
@@ -108,12 +108,14 @@ export async function gcalRequest(
 export async function listUserCalendars(userId: number): Promise<Array<{ id: string; summary: string; primary?: boolean }>> {
   try {
     const data = await gcalRequest(userId, "GET", "/users/me/calendarList");
+    console.log(`[Google Calendar] listUserCalendars for user ${userId}: fetched ${data?.items?.length || 0} calendars`);
     return (data.items ?? []).map((c: any) => ({
       id: c.id,
       summary: c.summary,
       primary: c.primary ?? false,
     }));
-  } catch {
+  } catch (e) {
+    console.error(`[Google Calendar] listUserCalendars error for user ${userId}:`, e);
     return [];
   }
 }
@@ -711,10 +713,11 @@ export async function googleAuthHandler(req: Request): Promise<Response> {
     return Response.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  const state = Buffer.from(JSON.stringify({ userId, returnTo })).toString("base64url");
+  const jsonState = JSON.stringify({ userId, returnTo });
+  const state = btoa(jsonState).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 
   const params = new URLSearchParams({
-    client_id: GOOGLE_CLIENT_ID,
+    client_id: ENV.googleClientId,
     redirect_uri: redirectUri,
     response_type: "code",
     scope: GOOGLE_SCOPES,
@@ -935,7 +938,7 @@ export async function googleCallbackHandler(req: Request): Promise<Response> {
   const error = url.searchParams.get("error");
 
   if (error) {
-    return Response.redirect(`/settings/calendar?error=${encodeURIComponent(error)}`, 302);
+    return Response.redirect(`${url.origin}/settings/calendar?error=${encodeURIComponent(error)}`, 302);
   }
 
   if (!code || !stateRaw) {
@@ -944,7 +947,9 @@ export async function googleCallbackHandler(req: Request): Promise<Response> {
 
   let state: { userId: number; returnTo: string };
   try {
-    state = JSON.parse(Buffer.from(stateRaw, "base64url").toString());
+    let b64 = stateRaw.replace(/-/g, '+').replace(/_/g, '/');
+    while (b64.length % 4) b64 += '=';
+    state = JSON.parse(atob(b64));
   } catch {
     return Response.redirect("/settings/calendar?error=invalid_state", 302);
   }
@@ -957,8 +962,8 @@ export async function googleCallbackHandler(req: Request): Promise<Response> {
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
         code,
-        client_id: GOOGLE_CLIENT_ID,
-        client_secret: GOOGLE_CLIENT_SECRET,
+        client_id: ENV.googleClientId,
+        client_secret: ENV.googleClientSecret,
         redirect_uri: redirectUri,
         grant_type: "authorization_code",
       }),
@@ -973,6 +978,16 @@ export async function googleCallbackHandler(req: Request): Promise<Response> {
     const db = await getDb();
     if (!db) throw new Error("DB not available");
 
+    const updateSet: any = {
+      accessToken: tokens.access_token,
+      tokenExpiry: expiry,
+      syncEnabled: true,
+      updatedAt: new Date(),
+    };
+    if (tokens.refresh_token) {
+      updateSet.refreshToken = tokens.refresh_token;
+    }
+
     await db.insert(calendarSettings).values({
       userId: state.userId,
       accessToken: tokens.access_token,
@@ -981,13 +996,7 @@ export async function googleCallbackHandler(req: Request): Promise<Response> {
       syncEnabled: true,
     }).onConflictDoUpdate({
       target: calendarSettings.userId,
-      set: {
-        accessToken: tokens.access_token,
-        refreshToken: tokens.refresh_token ?? null,
-        tokenExpiry: expiry,
-        syncEnabled: true,
-        updatedAt: new Date(),
-      },
+      set: updateSet,
     });
 
     // Reset any error outbox jobs so they get retried now that we have a fresh token
@@ -1003,10 +1012,11 @@ export async function googleCallbackHandler(req: Request): Promise<Response> {
       console.warn("[Google Calendar] Could not reset outbox jobs:", resetErr);
     }
 
-    return Response.redirect(`${state.returnTo}?connected=true`, 302);
+    return Response.redirect(`${url.origin}${state.returnTo}?connected=true`, 302);
   } catch (e) {
     console.error("[Google Calendar] Callback failed:", e);
-    return Response.redirect(`/settings/calendar?error=token_exchange_failed`, 302);
+    const url = new URL(req.url);
+    return Response.redirect(`${url.origin}/settings/calendar?error=token_exchange_failed`, 302);
   }
 }
 

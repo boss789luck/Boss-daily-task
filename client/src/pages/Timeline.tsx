@@ -53,9 +53,9 @@ export default function TimelinePage() {
   };
 
   return (
-    <div className="p-6 max-w-full">
+    <div className="p-4 md:p-6 max-w-full">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-2">
           <BarChart3 className="w-5 h-5 text-primary" />
           <h1 className="text-xl font-bold text-foreground">Timeline</h1>
@@ -74,9 +74,9 @@ export default function TimelinePage() {
         </div>
       </div>
 
-      <div className="glass-card rounded-xl overflow-hidden">
+      <div className="glass-card rounded-xl overflow-x-auto">
         {/* Day headers */}
-        <div className="flex border-b border-border sticky top-0 bg-card z-10">
+        <div className="flex border-b border-border sticky top-0 bg-card z-10 min-w-[800px]">
           <div className="w-48 flex-shrink-0 px-4 py-2 text-xs font-semibold text-muted-foreground border-r border-border">Project</div>
           <div className="flex-1 relative">
             <div className="flex">
@@ -91,7 +91,7 @@ export default function TimelinePage() {
         </div>
 
         {/* Today line */}
-        <div className="relative">
+        <div className="relative min-w-[800px]">
           {projectsWithDates.length === 0 ? (
             <div className="text-center py-16 text-muted-foreground text-sm">
               No projects with dates to display. Add start dates and deadlines to your projects.

@@ -1,0 +1,8 @@
+{
+  "name": "BOSS OS",
+  "short_name": "BOSS OS",
+  "description": "Task & Project Management",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ec4899"
+}

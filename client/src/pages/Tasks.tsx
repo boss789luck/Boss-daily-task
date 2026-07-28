@@ -190,7 +190,7 @@ export default function TasksPage() {
   };
 
   return (
-    <div className="p-6 lg:p-8 max-w-5xl mx-auto page-enter">
+    <div className="p-4 md:p-6 lg:p-8 max-w-5xl mx-auto page-enter">
       {/* ── Header ── */}
       <div className="flex items-center justify-between mb-7">
         <div>
@@ -380,7 +380,7 @@ export default function TasksPage() {
 
       {/* ── Create/Edit Dialog ── */}
       <Dialog open={showCreate || !!editTask} onOpenChange={(o) => { if (!o) { setShowCreate(false); setEditTask(null); } }}>
-        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="w-full sm:max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-base font-bold">{editTask ? "Edit Task" : "New Task"}</DialogTitle>
           </DialogHeader>
@@ -400,7 +400,7 @@ export default function TasksPage() {
                 className="rounded-xl border-border bg-muted/30 resize-none" rows={2} />
             </div>
             {/* Project + Status */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 lg:gap-5">
               <div className="space-y-1.5">
                 <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Project</Label>
                 <Select value={form.projectId} onValueChange={(v) => setForm({ ...form, projectId: v })}>

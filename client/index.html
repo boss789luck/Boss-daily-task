@@ -6,7 +6,46 @@
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <title>BOSS OS - Task & Project Management</title>    
+    <meta name="theme-color" content="#ffffff" />
+    <title>BOSS OS - Task & Project Management</title>
+    <script>
+      window.onerror = function (msg, url, line, col, error) {
+        var errDiv = document.createElement('div');
+        errDiv.style.position = 'fixed';
+        errDiv.style.top = '0';
+        errDiv.style.left = '0';
+        errDiv.style.width = '100%';
+        errDiv.style.background = 'red';
+        errDiv.style.color = 'white';
+        errDiv.style.padding = '10px';
+        errDiv.style.zIndex = '999999';
+        errDiv.style.whiteSpace = 'pre-wrap';
+        errDiv.innerText = 'Error: ' + msg + '\nURL: ' + url + '\nLine: ' + line + ':' + col + '\nStack: ' + (error ? error.stack : '');
+        document.body.appendChild(errDiv);
+      };
+      window.addEventListener('unhandledrejection', function(event) {
+        var errDiv = document.createElement('div');
+        errDiv.style.position = 'fixed';
+        errDiv.style.top = '0';
+        errDiv.style.left = '0';
+        errDiv.style.width = '100%';
+        errDiv.style.background = 'orange';
+        errDiv.style.color = 'white';
+        errDiv.style.padding = '10px';
+        errDiv.style.zIndex = '999999';
+        errDiv.style.whiteSpace = 'pre-wrap';
+        errDiv.innerText = 'Unhandled Promise: ' + (event.reason ? (event.reason.message || event.reason) : 'Unknown');
+        document.body.appendChild(errDiv);
+      });
+    </script>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    
+    <!-- PWA / iOS Home Screen Support -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="BOSS OS" />
+
     <!-- THIS IS THE START OF A COMMENT BLOCK, BLOCK TO BE DELETED: Google Fonts here, example:
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -17,10 +56,6 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <script
-      defer
-      src="%VITE_ANALYTICS_ENDPOINT%/umami"
-      data-website-id="%VITE_ANALYTICS_WEBSITE_ID%"></script>
   </body>
 
 </html>

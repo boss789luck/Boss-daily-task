@@ -392,7 +392,7 @@ export default function ProjectsPage() {
   const sortableItems = filtered.map((p) => p.id);
 
   return (
-    <div className="p-6 lg:p-8 max-w-7xl mx-auto page-enter">
+    <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto page-enter">
       {/* ── Header ── */}
       <div className="flex items-center justify-between mb-7">
         <div>
@@ -480,7 +480,7 @@ export default function ProjectsPage() {
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
                 className="rounded-xl border-border bg-muted/30 resize-none" rows={2} />
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 lg:gap-5 mt-4">
               <div className="space-y-1.5">
                 <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Area</Label>
                 <Select value={form.areaId} onValueChange={(v) => setForm({ ...form, areaId: v })}>

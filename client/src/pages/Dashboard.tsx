@@ -82,7 +82,7 @@ export default function Dashboard() {
   const activeProjects = projects?.filter((p) => p.status === "in_progress" || p.status === "planning").slice(0, 5) ?? [];
 
   return (
-    <div className="p-6 lg:p-8 space-y-8 max-w-7xl mx-auto page-enter">
+    <div className="p-4 md:p-6 lg:p-8 space-y-6 md:space-y-8 max-w-7xl mx-auto page-enter">
       {/* ── Header ── */}
       <div className="flex items-start justify-between gap-4">
         <div>
@@ -103,7 +103,7 @@ export default function Dashboard() {
       </div>
 
       {/* ── KPI Cards ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 stagger">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 stagger">
         {kpiCards.map((card) => {
           const a = kpiAccents[card.accentIdx];
           const isUrgent = card.urgent;
@@ -139,7 +139,7 @@ export default function Dashboard() {
       </div>
 
       {/* ── Main Grid ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
         {/* Active Projects */}
         <div className="lg:col-span-2 boss-card p-6">
           <div className="flex items-center justify-between mb-5">

@@ -171,7 +171,7 @@ async function generateBookSummaryForUser(userId: number, genre: string, weekLab
   const book = pool[Math.floor(Math.random() * pool.length)];
 
   const summaryResult = await invokeLLM({
-    model: "auto",
+    model: "gpt-4o-mini",
     messages: [
       {
         role: "system",
@@ -188,7 +188,7 @@ async function generateBookSummaryForUser(userId: number, genre: string, weekLab
   const summary = extractText(summaryResult);
 
   const lessonsResult = await invokeLLM({
-    model: "auto",
+    model: "gpt-4o-mini",
     messages: [
       {
         role: "system",

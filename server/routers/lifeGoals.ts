@@ -144,7 +144,13 @@ export const lifeGoalsRouter = router({
         const llmResult = await invokeLLM({
           messages: [{
             role: "user",
-            content: `You are an expert AI image prompt engineer. The user has the following life goals for the year: "${goalList}". Create a highly descriptive, cohesive image generation prompt in English that represents the successful achievement of these goals. Describe a beautiful, inspiring, unified scene or a cinematic dreamscape that integrates these themes naturally. CRITICAL: You MUST explicitly preserve any specific brands, models (e.g., Audi TTS), colors (e.g., black), and locations mentioned in the goals. Do not change the car model or color. Do not use words like 'collage' or 'split screen'. Reply ONLY with the prompt text, no intro or outro.`
+            content: `You are an expert AI image prompt engineer. The user has provided their life goals in Thai (or English): "${goalList}".
+Your task is to translate these goals into a SINGLE cohesive, highly detailed English prompt for an image generator (like Midjourney or DALL-E).
+IMPORTANT RULES:
+1. You MUST include specific objects mentioned (e.g., "black Audi TTS mk2", "Japanese landscape", "business office").
+2. Describe a unified, inspiring scene (e.g., "A successful person standing next to a black Audi TTS mk2, with a beautiful Japanese Mt. Fuji landscape in the background, holding a stock market portfolio showing high returns").
+3. DO NOT use words like 'collage', 'split screen', or 'multiple pictures'. It must be ONE seamless scene.
+4. Reply ONLY with the English prompt text. No introduction, no markdown formatting, no quotes.`
           }],
           maxTokens: 200,
         });

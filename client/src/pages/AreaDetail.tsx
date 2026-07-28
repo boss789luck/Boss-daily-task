@@ -36,9 +36,9 @@ export default function AreaDetailPage() {
   const { data: tasks } = trpc.tasks.list.useQuery({ areaId });
 
   if (isLoading) return (
-    <div className="p-6 lg:p-8 max-w-5xl mx-auto space-y-4">
+    <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto page-enter">
       <Skeleton className="h-14 w-80 rounded-2xl" />
-      <div className="grid grid-cols-3 gap-4">{[1,2,3].map(i => <Skeleton key={i} className="h-24 rounded-2xl" />)}</div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">{[1,2,3].map(i => <Skeleton key={i} className="h-24 rounded-2xl" />)}</div>
       <Skeleton className="h-48 rounded-2xl" />
     </div>
   );
@@ -49,7 +49,7 @@ export default function AreaDetailPage() {
   const completedTasks = tasks?.filter((t) => t.status === "done") ?? [];
 
   return (
-    <div className="p-6 lg:p-8 max-w-5xl mx-auto space-y-6 page-enter">
+    <div className="p-4 md:p-6 lg:p-8 max-w-5xl mx-auto space-y-4 md:space-y-6 page-enter">
       {/* ── Header ── */}
       <div className="flex items-center gap-3">
         <Link href="/areas">
@@ -70,7 +70,7 @@ export default function AreaDetailPage() {
       </div>
 
       {/* ── Stats ── */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
         {[
           { label: "Projects", value: projects?.length ?? 0, color: "oklch(0.52 0.26 270)", tint: "oklch(0.52 0.26 270 / 0.08)" },
           { label: "Open Tasks", value: openTasks.length, color: "oklch(0.72 0.18 70)", tint: "oklch(0.72 0.18 70 / 0.08)" },

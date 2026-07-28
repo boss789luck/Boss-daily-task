@@ -102,7 +102,7 @@ export async function generateImage(
     console.log("[ImageGen] Uploading to R2 with filename:", filename);
     const { url } = await storagePut(
        filename, 
-       buffer, 
+       new Uint8Array(buffer), 
        filename.endsWith(".png") ? "image/png" : "image/jpeg"
     );
     console.log("[ImageGen] R2 upload successful:", url);

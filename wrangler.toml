@@ -8,12 +8,12 @@ pages_build_output_dir = "dist/client"
 
 [[d1_databases]]
 binding = "DB"
-database_name = "boss-os-db"
-database_id = "00000000-0000-0000-0000-000000000000" # Replace with real ID later
+database_name = "boss-os-daily-task"
+database_id = "3feb3733-906f-414c-9d8c-fb319c8740d9"
 
 [[r2_buckets]]
 binding = "BUCKET"
 bucket_name = "boss-os-uploads"
 
-[triggers]
-crons = ["*/15 * * * *", "0 1 * * 1"] # Every 15 mins for Google Calendar, Every Monday 01:00 for Weekly Book
+# [triggers]
+# crons = ["*/15 * * * *", "0 1 * * 1"] # Every 15 mins for Google Calendar, Every Monday 01:00 for Weekly Book

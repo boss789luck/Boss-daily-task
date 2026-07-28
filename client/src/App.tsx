@@ -21,35 +21,41 @@ import CalendarSettingsPage from "@/pages/CalendarSettings";
 import HabitOSPage from "@/pages/HabitOS";
 import LifeGoalsPage from "@/pages/LifeGoals";
 import BookSummariesPage from "@/pages/BookSummaries";
+import LoginPage from "@/pages/Login";
 import { TaskSyncBridge } from "./components/TaskSyncBridge";
 
 function Router() {
   return (
     <>
     <TaskSyncBridge />
-    <BossLayout>
       <Switch>
-        <Route path="/" component={Dashboard} />
-        <Route path="/dashboard" component={Dashboard} />
-        <Route path="/areas" component={AreasPage} />
-        <Route path="/areas/:id" component={AreaDetailPage} />
-        <Route path="/projects" component={ProjectsPage} />
-        <Route path="/projects/:id" component={ProjectDetailPage} />
-        <Route path="/tasks" component={TasksPage} />
-        <Route path="/calendar" component={CalendarPage} />
-        <Route path="/timeline" component={TimelinePage} />
-        <Route path="/notes" component={NotesPage} />
-        <Route path="/weekly-review" component={WeeklyReviewPage} />
-        <Route path="/eisenhower" component={EisenhowerPage} />
-        <Route path="/import" component={ImportPage} />
-        <Route path="/settings/calendar" component={CalendarSettingsPage} />
-        <Route path="/habits" component={HabitOSPage} />
-        <Route path="/life-goals" component={LifeGoalsPage} />
-        <Route path="/books" component={BookSummariesPage} />
-        <Route path="/404" component={NotFound} />
-        <Route component={NotFound} />
+        <Route path="/login" component={LoginPage} />
+        <Route>
+          <BossLayout>
+            <Switch>
+              <Route path="/" component={Dashboard} />
+              <Route path="/dashboard" component={Dashboard} />
+              <Route path="/areas" component={AreasPage} />
+              <Route path="/areas/:id" component={AreaDetailPage} />
+              <Route path="/projects" component={ProjectsPage} />
+              <Route path="/projects/:id" component={ProjectDetailPage} />
+              <Route path="/tasks" component={TasksPage} />
+              <Route path="/calendar" component={CalendarPage} />
+              <Route path="/timeline" component={TimelinePage} />
+              <Route path="/notes" component={NotesPage} />
+              <Route path="/weekly-review" component={WeeklyReviewPage} />
+              <Route path="/eisenhower" component={EisenhowerPage} />
+              <Route path="/import" component={ImportPage} />
+              <Route path="/settings/calendar" component={CalendarSettingsPage} />
+              <Route path="/habits" component={HabitOSPage} />
+              <Route path="/life-goals" component={LifeGoalsPage} />
+              <Route path="/books" component={BookSummariesPage} />
+              <Route path="/404" component={NotFound} />
+              <Route component={NotFound} />
+            </Switch>
+          </BossLayout>
+        </Route>
       </Switch>
-      </BossLayout>
     </>
   );
 }

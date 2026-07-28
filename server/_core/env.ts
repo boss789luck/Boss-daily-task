@@ -17,8 +17,8 @@ export const ENV = {
   get oAuthServerUrl() { return getEnv("OAUTH_SERVER_URL") ?? ""; },
   get ownerOpenId() { return getEnv("OWNER_OPEN_ID") ?? ""; },
   get isProduction() { return getEnv("NODE_ENV") === "production"; },
-  get forgeApiUrl() { return getEnv("BUILT_IN_FORGE_API_URL") ?? getEnv("OPENAI_BASE_URL") ?? "https://api.openai.com"; },
-  get forgeApiKey() { return getEnv("BUILT_IN_FORGE_API_KEY") ?? getEnv("OPENAI_API_KEY") ?? ""; },
+  get forgeApiUrl() { return getEnv("OPENAI_BASE_URL") ?? getEnv("BUILT_IN_FORGE_API_URL") ?? "https://api.openai.com"; },
+  get forgeApiKey() { return getEnv("OPENAI_API_KEY") ?? getEnv("BUILT_IN_FORGE_API_KEY") ?? ""; },
   get openAiDalleKey() { return getEnv("OPENAI_DALLE_API_KEY") ?? ""; },
   get defaultLlmModel() { return getEnv("LLM_MODEL") ?? "gpt-4o-mini"; },
 };

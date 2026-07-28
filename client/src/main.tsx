@@ -18,7 +18,12 @@ const redirectToLoginIfUnauthorized = (error: unknown) => {
 
   if (!isUnauthorized) return;
 
-  window.location.href = getLoginUrl();
+  // In iOS PWA standalone mode, navigating directly to a cross-origin URL
+  // can cause a white screen or silently fail. 
+  // We instead navigate to an internal /login route where the user clicks a button to authorize.
+  if (window.location.pathname !== "/login") {
+    window.location.href = "/login";
+  }
 };
 
 queryClient.getQueryCache().subscribe(event => {

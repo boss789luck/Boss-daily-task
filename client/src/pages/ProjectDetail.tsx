@@ -82,7 +82,7 @@ export default function ProjectDetailPage() {
   });
 
   if (isLoading) return (
-    <div className="p-6 lg:p-8 max-w-4xl mx-auto space-y-4">
+    <div className="p-4 md:p-6 lg:p-8 max-w-4xl mx-auto space-y-4">
       <Skeleton className="h-14 w-96 rounded-2xl" />
       <Skeleton className="h-32 rounded-2xl" />
       <Skeleton className="h-64 rounded-2xl" />
@@ -128,7 +128,7 @@ export default function ProjectDetailPage() {
 
   return (
     <>
-    <div className="p-6 lg:p-8 max-w-4xl mx-auto space-y-6 page-enter">
+    <div className="p-4 md:p-6 lg:p-8 max-w-4xl mx-auto space-y-4 md:space-y-6 page-enter">
       {/* ── Header ── */}
       <div className="flex items-start gap-3">
         <Link href="/projects">

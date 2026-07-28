@@ -218,7 +218,7 @@ export default function TaskEditModal({ task, onClose, onSuccess }: Props) {
 
   return (
     <Dialog open={!!task} onOpenChange={(o) => { if (!o) onClose(); }}>
-      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-full sm:max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <div className="flex items-start justify-between gap-3 pr-6">
             <div className="flex-1 min-w-0">
@@ -271,7 +271,7 @@ export default function TaskEditModal({ task, onClose, onSuccess }: Props) {
           </div>
 
           {/* Project + Status + Dates + Assignee */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 lg:gap-5">
             <div className="space-y-1.5">
               <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Project</Label>
               <Select value={form.projectId} onValueChange={(v) => setForm({ ...form, projectId: v })}>

@@ -60,6 +60,9 @@ export async function enqueueCalendarSync(
       nextRetryAt: new Date(),
     });
   }
+
+  // Auto-sync immediately instead of waiting for setInterval
+  await processOutbox();
 }
 
 // ─── Process pending outbox jobs ──────────────────────────────────────────────

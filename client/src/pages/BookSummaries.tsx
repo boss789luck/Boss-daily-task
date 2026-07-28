@@ -113,7 +113,7 @@ function CurrentBookCard() {
 
       <CardContent className="p-6">
         {/* Book info row */}
-        <div className="flex gap-5 mb-6">
+        <div className="flex flex-col md:flex-row md:items-start gap-4 md:gap-5 mb-6">
           <BookCover emoji={currentBook.coverEmoji} color={currentBook.coverColor} size="lg" />
           <div className="flex-1 min-w-0">
             <h2 className="text-xl font-bold leading-tight">{currentBook.title}</h2>
@@ -397,7 +397,7 @@ export default function BookSummaries() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-6 space-y-6">
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2">
             <BookOpen className="w-7 h-7 text-primary" />

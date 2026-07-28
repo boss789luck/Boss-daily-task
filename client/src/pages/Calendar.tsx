@@ -205,9 +205,9 @@ export default function CalendarPage() {
   const dayIsoStr = (day: Date) => format(day, "yyyy-MM-dd");
 
   return (
-    <div className="p-6 max-w-7xl mx-auto h-full flex flex-col">
+    <div className="p-4 md:p-6 max-w-7xl mx-auto h-full flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
           <CalIcon className="w-5 h-5 text-primary" />
           <h1 className="text-xl font-bold text-foreground">
@@ -216,7 +216,7 @@ export default function CalendarPage() {
             {view === "day" && format(currentDate, "EEEE, MMMM d, yyyy")}
           </h1>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           {draggingId && (
             <span className="text-xs text-primary animate-pulse font-medium">
               Drop on a day to reschedule
