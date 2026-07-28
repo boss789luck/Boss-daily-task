@@ -1,0 +1,19 @@
+name = "boss-os"
+compatibility_date = "2024-03-20"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = "dist/client"
+
+# [vars]
+# Add environment variables via Cloudflare Dashboard or .dev.vars for local dev
+
+[[d1_databases]]
+binding = "DB"
+database_name = "boss-os-db"
+database_id = "00000000-0000-0000-0000-000000000000" # Replace with real ID later
+
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "boss-os-uploads"
+
+[triggers]
+crons = ["*/15 * * * *", "0 1 * * 1"] # Every 15 mins for Google Calendar, Every Monday 01:00 for Weekly Book
