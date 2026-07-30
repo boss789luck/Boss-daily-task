@@ -159,18 +159,29 @@ export default function CalendarPage() {
   }, [currentDate]);
 
   // ─── Task chip ────────────────────────────────────────────────────────────────
-  const TaskChip = ({ task, compact = false, isOverlay = false }: { task: any; compact?: boolean, isOverlay?: boolean }) => {
-    const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
-      id: task.id.toString(),
-      data: { task },
-    });
-    
+  const TaskChipBase = ({ 
+    task, 
+    compact = false, 
+    isOverlay = false,
+    attributes,
+    listeners,
+    setNodeRef,
+    isDragging
+  }: { 
+    task: any; 
+    compact?: boolean, 
+    isOverlay?: boolean,
+    attributes?: any,
+    listeners?: any,
+    setNodeRef?: any,
+    isDragging?: boolean
+  }) => {
     const col = getPriColor(task.priority);
     return (
       <div
-        ref={isOverlay ? undefined : setNodeRef}
-        {...(isOverlay ? {} : listeners)}
-        {...(isOverlay ? {} : attributes)}
+        ref={setNodeRef}
+        {...listeners}
+        {...attributes}
         onClick={(e) => {
           // Don't open modal if user is dragging
           if (isDragging) return;
@@ -199,6 +210,15 @@ export default function CalendarPage() {
         )}
       </div>
     );
+  };
+
+  const TaskChip = ({ task, compact = false }: { task: any; compact?: boolean }) => {
+    const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+      id: task.id.toString(),
+      data: { task },
+    });
+    
+    return <TaskChipBase task={task} compact={compact} attributes={attributes} listeners={listeners} setNodeRef={setNodeRef} isDragging={isDragging} />;
   };
 
   const dayIsoStr = (day: Date) => format(day, "yyyy-MM-dd");
@@ -424,7 +444,7 @@ export default function CalendarPage() {
         />
 
         <DragOverlay>
-          {draggingTask ? <TaskChip task={draggingTask} compact={view === "month"} isOverlay /> : null}
+          {draggingTask ? <TaskChipBase task={draggingTask} compact={view === "month"} isOverlay /> : null}
         </DragOverlay>
       </div>
     </DndContext>
