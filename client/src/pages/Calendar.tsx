@@ -16,7 +16,7 @@ import {
   DragOverlay,
   useSensor,
   useSensors,
-  PointerSensor,
+  MouseSensor,
   TouchSensor,
   useDraggable,
   useDroppable,
@@ -65,7 +65,7 @@ export default function CalendarPage() {
   const [draggingTask, setDraggingTask] = useState<any>(null);
 
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 5 } })
   );
 
