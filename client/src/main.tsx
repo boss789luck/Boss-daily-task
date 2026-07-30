@@ -9,6 +9,7 @@ import { getLoginUrl } from "./const";
 import "./index.css";
 
 import { polyfill } from "mobile-drag-drop";
+// @ts-ignore
 import { scrollBehaviourDragImageTranslateOverride } from "mobile-drag-drop/scroll-behaviour-hack";
 import "mobile-drag-drop/default.css";
 

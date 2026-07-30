@@ -586,6 +586,7 @@ export async function pullFromGoogleCalendar(userId: number): Promise<{
         maxResults: "250",
         singleEvents: "true",
         showDeleted: "true",  // ← include cancelled events so we can detect deletions
+        timeZone: "Asia/Bangkok", // Force return times in Bangkok TZ
       });
       if (pageToken) params.set("pageToken", pageToken);
 
@@ -666,13 +667,27 @@ export async function pullFromGoogleCalendar(userId: number): Promise<{
       // Skip done/cancelled tasks
       if (task.status === "done" || task.status === "cancelled") { skipped++; continue; }
 
-      // Compare dates — only update if GCal date differs from DB date
+      // Compare dates and times — update if GCal differs from DB
       const dbDueDateStr = task.dueDate ? toBangkokDateStr(task.dueDate) : null;
       const gcalDueDateStr = toBangkokDateStr(gcalDueDate);
 
-      if (dbDueDateStr === gcalDueDateStr) { skipped++; continue; }
+      let gcalStartTimeStr: string | null = null;
+      let gcalEndTimeStr: string | null = null;
+      if (ev.start?.dateTime) {
+        const startMatch = ev.start.dateTime.match(/T(\d{2}:\d{2})/);
+        if (startMatch) gcalStartTimeStr = startMatch[1];
+      }
+      if (ev.end?.dateTime) {
+        const endMatch = ev.end.dateTime.match(/T(\d{2}:\d{2})/);
+        if (endMatch) gcalEndTimeStr = endMatch[1];
+      }
 
-      // Date changed in GCal — update BOSS OS task
+      const dateChanged = dbDueDateStr !== gcalDueDateStr;
+      const timeChanged = (task.startTime || null) !== gcalStartTimeStr || (task.endTime || null) !== gcalEndTimeStr;
+
+      if (!dateChanged && !timeChanged) { skipped++; continue; }
+
+      // Date or time changed in GCal — update BOSS OS task
       const updateData: Partial<typeof tasks.$inferInsert> = {
         dueDate: gcalDueDate,
         lastSyncedAt: new Date(),
@@ -680,13 +695,23 @@ export async function pullFromGoogleCalendar(userId: number): Promise<{
       if (gcalStartDate) {
         updateData.startDate = gcalStartDate;
       }
+      if (timeChanged) {
+        updateData.startTime = gcalStartTimeStr;
+        updateData.endTime = gcalEndTimeStr;
+        if (gcalStartTimeStr && gcalEndTimeStr) {
+           const [sh, sm] = gcalStartTimeStr.split(':').map(Number);
+           const [eh, em] = gcalEndTimeStr.split(':').map(Number);
+           const duration = (eh * 60 + em) - (sh * 60 + sm);
+           if (duration > 0) updateData.estimatedDuration = duration;
+        }
+      }
 
       await db.update(tasks)
         .set(updateData)
         .where(eq(tasks.id, taskId));
 
       updated++;
-      console.log(`[GCal Pull] Task ${taskId} "${task.name}": ${dbDueDateStr} → ${gcalDueDateStr}`);
+      console.log(`[GCal Pull] Task ${taskId} "${task.name}": Date/Time synced from GCal`);
     }
   } catch (e) {
     errors.push(String(e));
