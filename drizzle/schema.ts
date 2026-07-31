@@ -384,6 +384,7 @@ export const cards = sqliteTable("cards", {
   userId: integer("userId").notNull(),
   cardName: text("cardName").notNull(),
   bankName: text("bankName"),
+  linkedBankAccount: text("linkedBankAccount"),
   cardNumberEncrypted: text("cardNumberEncrypted").notNull(),
   cardNumberLast4: text("cardNumberLast4").notNull(),
   expiryEncrypted: text("expiryEncrypted").notNull(),

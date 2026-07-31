@@ -15,6 +15,13 @@
       "when": 1785513496182,
       "tag": "0001_absurd_sharon_ventura",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1785522835603,
+      "tag": "0002_fancy_bromley",
+      "breakpoints": true
     }
   ]
 }

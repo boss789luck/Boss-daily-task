@@ -42,6 +42,11 @@ export function VirtualCard({ card, onEdit, onDelete }: { card: any, onEdit: (ca
         <div>
           <h3 className="font-semibold text-lg">{card.cardName}</h3>
           <p className="text-xs text-slate-300 opacity-80">{card.bankName}</p>
+          {card.linkedBankAccount && (
+            <p className="text-[10px] text-slate-400 mt-0.5 font-mono opacity-70">
+              Acc: {isRevealed ? card.linkedBankAccount : "******" + card.linkedBankAccount.slice(-4)}
+            </p>
+          )}
         </div>
         <CreditCard className="text-orange-500 opacity-80" />
       </div>

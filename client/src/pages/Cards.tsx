@@ -17,7 +17,7 @@ export default function CardsPage() {
       toast.success("เพิ่มบัตรสำเร็จ");
       utils.cardManager.getCards.invalidate();
       setIsAddOpen(false);
-      setFormData({ cardName: "", bankName: "", cardNumber: "", expiry: "", cvv: "", cardholderName: "" });
+      setFormData({ cardName: "", bankName: "", linkedBankAccount: "", cardNumber: "", expiry: "", cvv: "", cardholderName: "" });
     },
     onError: (err) => {
       toast.error(`เพิ่มบัตรไม่สำเร็จ: ${err.message}`);
@@ -48,12 +48,12 @@ export default function CardsPage() {
   
   // New Card Form State
   const [formData, setFormData] = useState({
-    cardName: "", bankName: "", cardNumber: "", expiry: "", cvv: "", cardholderName: ""
+    cardName: "", bankName: "", linkedBankAccount: "", cardNumber: "", expiry: "", cvv: "", cardholderName: ""
   });
 
   // Edit Card Form State
   const [editFormData, setEditFormData] = useState({
-    cardName: "", bankName: "", cardNumber: "", expiry: "", cvv: "", cardholderName: ""
+    cardName: "", bankName: "", linkedBankAccount: "", cardNumber: "", expiry: "", cvv: "", cardholderName: ""
   });
 
   if (isLoading) return <div className="p-8">Loading...</div>;
@@ -67,6 +67,7 @@ export default function CardsPage() {
     setEditFormData({
       cardName: card.cardName || "",
       bankName: card.bankName || "",
+      linkedBankAccount: card.linkedBankAccount || "",
       cardNumber: card.cardNumberFull || card.cardNumberEncrypted || "",
       expiry: card.expiryRaw || card.expiryEncrypted || "",
       cvv: card.cvvRaw || card.cvvEncrypted || "",
@@ -105,6 +106,7 @@ export default function CardsPage() {
             <div className="flex flex-col gap-4 mt-4">
               <Input placeholder="ชื่อเรียกบัตร (เช่น KBank Boss)" value={formData.cardName} onChange={e => setFormData({...formData, cardName: e.target.value})} />
               <Input placeholder="ธนาคาร" value={formData.bankName} onChange={e => setFormData({...formData, bankName: e.target.value})} />
+              <Input placeholder="เลขบัญชีธนาคาร (ที่ผูกกับบัตร)" value={formData.linkedBankAccount} onChange={e => setFormData({...formData, linkedBankAccount: e.target.value})} />
               <Input placeholder="เลขบัตร 16 หลัก" value={formData.cardNumber} onChange={e => setFormData({...formData, cardNumber: e.target.value})} />
               <div className="flex gap-4">
                 <Input placeholder="MM/YY" value={formData.expiry} onChange={e => setFormData({...formData, expiry: e.target.value})} />
@@ -128,6 +130,7 @@ export default function CardsPage() {
             <div className="flex flex-col gap-4 mt-4">
               <Input placeholder="ชื่อเรียกบัตร (เช่น KBank Boss)" value={editFormData.cardName} onChange={e => setEditFormData({...editFormData, cardName: e.target.value})} />
               <Input placeholder="ธนาคาร" value={editFormData.bankName} onChange={e => setEditFormData({...editFormData, bankName: e.target.value})} />
+              <Input placeholder="เลขบัญชีธนาคาร (ที่ผูกกับบัตร)" value={editFormData.linkedBankAccount} onChange={e => setEditFormData({...editFormData, linkedBankAccount: e.target.value})} />
               <Input placeholder="เลขบัตร 16 หลัก" value={editFormData.cardNumber} onChange={e => setEditFormData({...editFormData, cardNumber: e.target.value})} />
               <div className="flex gap-4">
                 <Input placeholder="MM/YY" value={editFormData.expiry} onChange={e => setEditFormData({...editFormData, expiry: e.target.value})} />

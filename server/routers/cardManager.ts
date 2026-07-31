@@ -34,7 +34,8 @@ export const cardManagerRouter = router({
       cardNumber: z.string(),
       expiry: z.string(),
       cvv: z.string(),
-      cardholderName: z.string().optional()
+      cardholderName: z.string().optional(),
+      linkedBankAccount: z.string().optional()
     }))
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
@@ -46,6 +47,7 @@ export const cardManagerRouter = router({
         userId: ctx.user.id,
         cardName: input.cardName,
         bankName: input.bankName,
+        linkedBankAccount: input.linkedBankAccount,
         cardNumberLast4: last4,
         cardNumberEncrypted: input.cardNumber, // Store as plaintext
         expiryEncrypted: input.expiry,
@@ -63,7 +65,8 @@ export const cardManagerRouter = router({
       cardNumber: z.string().optional(),
       expiry: z.string().optional(),
       cvv: z.string().optional(),
-      cardholderName: z.string().optional()
+      cardholderName: z.string().optional(),
+      linkedBankAccount: z.string().optional()
     }))
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
@@ -72,6 +75,7 @@ export const cardManagerRouter = router({
       const updateData: any = {};
       if (input.cardName) updateData.cardName = input.cardName;
       if (input.bankName !== undefined) updateData.bankName = input.bankName;
+      if (input.linkedBankAccount !== undefined) updateData.linkedBankAccount = input.linkedBankAccount;
       if (input.cardNumber) {
         updateData.cardNumberEncrypted = input.cardNumber;
         updateData.cardNumberLast4 = input.cardNumber.slice(-4);
