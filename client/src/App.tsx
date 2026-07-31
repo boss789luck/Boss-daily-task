@@ -4,6 +4,7 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { PinProvider } from "./contexts/PinContext";
 import BossLayout from "./components/BossLayout";
 import Dashboard from "./pages/Dashboard";
 import AreasPage from "./pages/Areas";
@@ -22,6 +23,9 @@ import HabitOSPage from "@/pages/HabitOS";
 import LifeGoalsPage from "@/pages/LifeGoals";
 import BookSummariesPage from "@/pages/BookSummaries";
 import LoginPage from "@/pages/Login";
+import CardsPage from "@/pages/Cards";
+import EntitiesPage from "@/pages/Entities";
+import GraphPage from "@/pages/Graph";
 import { TaskSyncBridge } from "./components/TaskSyncBridge";
 
 function Router() {
@@ -50,6 +54,9 @@ function Router() {
               <Route path="/habits" component={HabitOSPage} />
               <Route path="/life-goals" component={LifeGoalsPage} />
               <Route path="/books" component={BookSummariesPage} />
+              <Route path="/cards" component={CardsPage} />
+              <Route path="/entities" component={EntitiesPage} />
+              <Route path="/graph" component={GraphPage} />
               <Route path="/404" component={NotFound} />
               <Route component={NotFound} />
             </Switch>
@@ -65,8 +72,10 @@ function App() {
     <ErrorBoundary>
       <ThemeProvider defaultTheme="light" switchable>
         <TooltipProvider>
-          <Toaster position="bottom-right" />
-          <Router />
+          <PinProvider>
+            <Toaster position="bottom-right" />
+            <Router />
+          </PinProvider>
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>

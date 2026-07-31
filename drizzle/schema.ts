@@ -14,6 +14,8 @@ export const users = sqliteTable("users", {
   email: text("email"),
   loginMethod: text("loginMethod"),
   role: text("role", { enum: ["user", "admin"] }).default("user").notNull(),
+  masterPinHash: text("masterPinHash"),
+  masterPinSalt: text("masterPinSalt"),
   createdAt: integer("createdAt", { mode: 'timestamp' }).default(sql`(strftime('%s', 'now'))`).notNull(),
   updatedAt: integer("updatedAt", { mode: 'timestamp' }).default(sql`(strftime('%s', 'now'))`).notNull(),
   lastSignedIn: integer("lastSignedIn", { mode: 'timestamp' }).default(sql`(strftime('%s', 'now'))`).notNull(),
@@ -375,3 +377,47 @@ export const bookPreferences = sqliteTable("book_preferences", {
 });
 export type BookPreference = typeof bookPreferences.$inferSelect;
 export type InsertBookPreference = typeof bookPreferences.$inferInsert;
+
+// ─── Card Account Link Manager ────────────────────────────────────────────────
+export const cards = sqliteTable("cards", {
+  id: integer("id", { mode: 'number' }).primaryKey({ autoIncrement: true }),
+  userId: integer("userId").notNull(),
+  cardName: text("cardName").notNull(),
+  bankName: text("bankName"),
+  cardNumberEncrypted: text("cardNumberEncrypted").notNull(),
+  cardNumberLast4: text("cardNumberLast4").notNull(),
+  expiryEncrypted: text("expiryEncrypted").notNull(),
+  cvvEncrypted: text("cvvEncrypted").notNull(),
+  cardholderNameEncrypted: text("cardholderNameEncrypted"),
+  createdAt: integer("createdAt", { mode: 'timestamp' }).default(sql`(strftime('%s', 'now'))`).notNull(),
+  updatedAt: integer("updatedAt", { mode: 'timestamp' }).default(sql`(strftime('%s', 'now'))`).notNull(),
+});
+export type Card = typeof cards.$inferSelect;
+export type InsertCard = typeof cards.$inferInsert;
+
+export const entities = sqliteTable("entities", {
+  id: integer("id", { mode: 'number' }).primaryKey({ autoIncrement: true }),
+  userId: integer("userId").notNull(),
+  type: text("type", { enum: ["page", "business_manager", "ad_account", "fb_profile", "subscription"] }).notNull(),
+  name: text("name").notNull(),
+  loginNote: text("loginNote"), // mainly for fb_profile
+  status: text("status", { enum: ["active", "paused", "banned", "unknown"] }).default("active").notNull(),
+  notes: text("notes"),
+  createdAt: integer("createdAt", { mode: 'timestamp' }).default(sql`(strftime('%s', 'now'))`).notNull(),
+  updatedAt: integer("updatedAt", { mode: 'timestamp' }).default(sql`(strftime('%s', 'now'))`).notNull(),
+});
+export type Entity = typeof entities.$inferSelect;
+export type InsertEntity = typeof entities.$inferInsert;
+
+export const cardEntityLinks = sqliteTable("card_entity_links", {
+  id: integer("id", { mode: 'number' }).primaryKey({ autoIncrement: true }),
+  userId: integer("userId").notNull(),
+  cardId: integer("cardId").notNull(),
+  entityId: integer("entityId").notNull(),
+  linkedSince: integer("linkedSince", { mode: 'timestamp' }).default(sql`(strftime('%s', 'now'))`).notNull(),
+  note: text("note"),
+  createdAt: integer("createdAt", { mode: 'timestamp' }).default(sql`(strftime('%s', 'now'))`).notNull(),
+  updatedAt: integer("updatedAt", { mode: 'timestamp' }).default(sql`(strftime('%s', 'now'))`).notNull(),
+});
+export type CardEntityLink = typeof cardEntityLinks.$inferSelect;
+export type InsertCardEntityLink = typeof cardEntityLinks.$inferInsert;

@@ -42,6 +42,7 @@ import { createTaskAndSync, updateTaskAndSync, deleteTaskAndSync, toggleTaskDone
 import { habitsRouter } from "./routers/habits";
 import { lifeGoalsRouter } from "./routers/lifeGoals";
 import { bookSummariesRouter } from "./routers/bookSummaries";
+import { cardManagerRouter } from "./routers/cardManager";
 
 // ─── Shared Zod schemas ───────────────────────────────────────────────────────
 const areaInput = z.object({
@@ -614,6 +615,7 @@ export const appRouter = router({
   habits: habitsRouter,
   lifeGoals: lifeGoalsRouter,
   bookSummaries: bookSummariesRouter,
+  cardManager: cardManagerRouter,
 });
 
 // ─── CSV Parser ───────────────────────────────────────────────────────────────

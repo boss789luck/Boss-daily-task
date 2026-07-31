@@ -9,16 +9,19 @@ import { getLoginUrl } from "./const";
 import "./index.css";
 
 import { polyfill } from "mobile-drag-drop";
-// @ts-ignore
-import { scrollBehaviourDragImageTranslateOverride } from "mobile-drag-drop/scroll-behaviour-hack";
 import "mobile-drag-drop/default.css";
 
-polyfill({
-  dragImageTranslateOverride: scrollBehaviourDragImageTranslateOverride
-});
+polyfill();
 
 // Needed for iOS to work smoothly with mobile-drag-drop
 window.addEventListener("touchmove", function() {}, { passive: false });
+
+// Suppress harmless ResizeObserver errors from triggering the Vite error overlay
+window.addEventListener('error', (e) => {
+  if (e.message === 'ResizeObserver loop completed with undelivered notifications.' || e.message === 'ResizeObserver loop limit exceeded') {
+    e.stopImmediatePropagation();
+  }
+});
 
 const queryClient = new QueryClient();
 

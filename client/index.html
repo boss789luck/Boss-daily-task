@@ -10,6 +10,8 @@
     <title>BOSS OS - Task & Project Management</title>
     <script>
       window.onerror = function (msg, url, line, col, error) {
+        if (typeof msg === 'string' && (msg.includes('ResizeObserver') || msg === 'Script error.')) return false;
+        
         var errDiv = document.createElement('div');
         errDiv.style.position = 'fixed';
         errDiv.style.top = '0';

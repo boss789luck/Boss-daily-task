@@ -10,6 +10,7 @@ pages_build_output_dir = "dist/client"
 binding = "DB"
 database_name = "boss-os-daily-task"
 database_id = "3feb3733-906f-414c-9d8c-fb319c8740d9"
+migrations_dir = "drizzle"
 
 [[r2_buckets]]
 binding = "BUCKET"
