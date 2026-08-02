@@ -1,7 +1,7 @@
 name = "boss-os"
 compatibility_date = "2024-03-20"
 compatibility_flags = ["nodejs_compat"]
-pages_build_output_dir = "dist/client"
+pages_build_output_dir = "dist/public"
 
 # [vars]
 # Add environment variables via Cloudflare Dashboard or .dev.vars for local dev
