@@ -17,7 +17,7 @@ export default function EntitiesPage() {
       toast.success("เพิ่ม Entity สำเร็จ");
       utils.cardManager.getEntities.invalidate();
       setIsAddOpen(false);
-      setFormData({ type: "page", name: "", loginNote: "", status: "active", notes: "" });
+      setFormData({ type: "page", name: "", loginNote: "", status: "active", notes: "", fbPhoneNumber: "", developerPhoneNumber: "" });
     }
   });
 
@@ -40,7 +40,7 @@ export default function EntitiesPage() {
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [formData, setFormData] = useState<any>({
-    type: "page", name: "", loginNote: "", status: "active", notes: ""
+    type: "page", name: "", loginNote: "", status: "active", notes: "", fbPhoneNumber: "", developerPhoneNumber: ""
   });
   const [editData, setEditData] = useState<any>(null);
 
@@ -94,6 +94,14 @@ export default function EntitiesPage() {
                   <Textarea placeholder="Login Notes (ex. Bitwarden - Profile A)" value={formData.loginNote} onChange={e => setFormData({...formData, loginNote: e.target.value})} />
                 </div>
               )}
+
+              {formData.type === "fb_profile" && (
+                <div className="flex flex-col gap-4 p-3 border border-slate-200 rounded-md bg-slate-50">
+                  <h4 className="text-sm font-medium text-slate-700">ข้อมูลเบอร์โทรศัพท์ (ฟาร์มเฟส)</h4>
+                  <Input placeholder="เบอร์โทรที่ผูกกับเฟส" value={formData.fbPhoneNumber || ""} onChange={e => setFormData({...formData, fbPhoneNumber: e.target.value})} />
+                  <Input placeholder="เบอร์โทรที่ผูกกับ Developer Facebook" value={formData.developerPhoneNumber || ""} onChange={e => setFormData({...formData, developerPhoneNumber: e.target.value})} />
+                </div>
+              )}
               
               <Textarea placeholder="หมายเหตุเพิ่มเติม" value={formData.notes} onChange={e => setFormData({...formData, notes: e.target.value})} />
               
@@ -143,6 +151,14 @@ export default function EntitiesPage() {
                     <Textarea placeholder="Login Notes (ex. Bitwarden - Profile A)" value={editData.loginNote || ""} onChange={e => setEditData({...editData, loginNote: e.target.value})} />
                   </div>
                 )}
+
+                {editData.type === "fb_profile" && (
+                  <div className="flex flex-col gap-4 p-3 border border-slate-200 rounded-md bg-slate-50">
+                    <h4 className="text-sm font-medium text-slate-700">ข้อมูลเบอร์โทรศัพท์ (ฟาร์มเฟส)</h4>
+                    <Input placeholder="เบอร์โทรที่ผูกกับเฟส" value={editData.fbPhoneNumber || ""} onChange={e => setEditData({...editData, fbPhoneNumber: e.target.value})} />
+                    <Input placeholder="เบอร์โทรที่ผูกกับ Developer Facebook" value={editData.developerPhoneNumber || ""} onChange={e => setEditData({...editData, developerPhoneNumber: e.target.value})} />
+                  </div>
+                )}
                 
                 <Textarea placeholder="หมายเหตุเพิ่มเติม" value={editData.notes || ""} onChange={e => setEditData({...editData, notes: e.target.value})} />
                 
@@ -183,7 +199,9 @@ export default function EntitiesPage() {
                     {e.status}
                   </span>
                 </td>
-                <td className="px-6 py-3 text-slate-500 max-w-[200px] truncate">{e.notes || e.loginNote || "-"}</td>
+                <td className="px-6 py-3 text-slate-500 max-w-[200px] truncate">
+                  {[e.notes, e.loginNote, e.fbPhoneNumber ? `FB: ${e.fbPhoneNumber}` : "", e.developerPhoneNumber ? `Dev: ${e.developerPhoneNumber}` : ""].filter(Boolean).join(" | ") || "-"}
+                </td>
                 <td className="px-6 py-3">
                   <div className="flex items-center gap-2">
                     <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:text-blue-600 hover:bg-blue-50" onClick={() => {

@@ -404,6 +404,8 @@ export const entities = sqliteTable("entities", {
   loginNote: text("loginNote"), // mainly for fb_profile
   status: text("status", { enum: ["active", "paused", "banned", "unknown"] }).default("active").notNull(),
   notes: text("notes"),
+  fbPhoneNumber: text("fbPhoneNumber"),
+  developerPhoneNumber: text("developerPhoneNumber"),
   createdAt: integer("createdAt", { mode: 'timestamp' }).default(sql`(strftime('%s', 'now'))`).notNull(),
   updatedAt: integer("updatedAt", { mode: 'timestamp' }).default(sql`(strftime('%s', 'now'))`).notNull(),
 });

@@ -112,7 +112,9 @@ export const cardManagerRouter = router({
       type: z.enum(["page", "business_manager", "ad_account", "fb_profile", "subscription"]),
       loginNote: z.string().optional(),
       status: z.enum(["active", "paused", "banned", "unknown"]).optional(),
-      notes: z.string().optional()
+      notes: z.string().optional(),
+      fbPhoneNumber: z.string().optional(),
+      developerPhoneNumber: z.string().optional()
     }))
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
@@ -123,7 +125,9 @@ export const cardManagerRouter = router({
         type: input.type,
         loginNote: input.loginNote,
         status: input.status || "active",
-        notes: input.notes
+        notes: input.notes,
+        fbPhoneNumber: input.fbPhoneNumber,
+        developerPhoneNumber: input.developerPhoneNumber
       });
       return { success: true };
     }),
@@ -135,7 +139,9 @@ export const cardManagerRouter = router({
       type: z.enum(["page", "business_manager", "ad_account", "fb_profile", "subscription"]).optional(),
       loginNote: z.string().optional(),
       status: z.enum(["active", "paused", "banned", "unknown"]).optional(),
-      notes: z.string().optional()
+      notes: z.string().optional(),
+      fbPhoneNumber: z.string().optional(),
+      developerPhoneNumber: z.string().optional()
     }))
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
@@ -147,7 +153,10 @@ export const cardManagerRouter = router({
       if (input.loginNote !== undefined) updateData.loginNote = input.loginNote;
       if (input.status) updateData.status = input.status;
       if (input.notes !== undefined) updateData.notes = input.notes;
+      if (input.fbPhoneNumber !== undefined) updateData.fbPhoneNumber = input.fbPhoneNumber;
+      if (input.developerPhoneNumber !== undefined) updateData.developerPhoneNumber = input.developerPhoneNumber;
 
+      if (Object.keys(updateData).length === 0) return { success: true };
       await db.update(entities).set(updateData).where(and(eq(entities.id, input.id), eq(entities.userId, ctx.user.id)));
       return { success: true };
     }),
