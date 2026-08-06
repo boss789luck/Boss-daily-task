@@ -90,19 +90,25 @@ export function LinkListView({ cards, entities, links }: LinkListViewProps) {
 
   // Stats
   const stats = useMemo(() => {
-    if (!entities) return { activePages: 0, inactivePages: 0, activeAds: 0, inactiveAds: 0 };
+    const uniquePages = new Map();
+    const uniqueAds = new Map();
     
-    const pages = entities.filter(e => e.type === "page");
-    const ads = entities.filter(e => e.type === "ad_account");
+    rows.forEach(r => {
+      if (r.page) uniquePages.set(r.page.id, r.page);
+      if (r.adAccount) uniqueAds.set(r.adAccount.id, r.adAccount);
+    });
+
+    const pages = Array.from(uniquePages.values());
+    const ads = Array.from(uniqueAds.values());
 
     return {
-      activePages: pages.filter(p => p.status === "active").length,
-      inactivePages: pages.filter(p => p.status !== "active").length,
-      activeAds: ads.filter(a => a.status === "active").length,
-      inactiveAds: ads.filter(a => a.status !== "active").length,
+      activePages: pages.filter((p: any) => p.status === "active").length,
+      inactivePages: pages.filter((p: any) => p.status !== "active").length,
+      activeAds: ads.filter((a: any) => a.status === "active").length,
+      inactiveAds: ads.filter((a: any) => a.status !== "active").length,
       totalCards: cards?.length || 0
     };
-  }, [entities, cards]);
+  }, [rows, cards]);
 
   const StatusIndicator = ({ status }: { status: string }) => {
     if (status === "active") {
