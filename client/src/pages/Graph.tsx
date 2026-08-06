@@ -4,6 +4,7 @@ import { ReactFlow, MiniMap, Controls, Background, useNodesState, useEdgesState,
 import "@xyflow/react/dist/style.css";
 import { CreditCard, MonitorPlay, Layers, LayoutPanelLeft, UserSquare2, Link as LinkIcon, Trash2, Unlink, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LinkListView } from "@/components/LinkListView";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
@@ -48,6 +49,7 @@ export default function GraphPage() {
 
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isSetupOpen, setIsSetupOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<"graph" | "list">("graph");
   const [formData, setFormData] = useState({ cardId: "", entityId: "" });
   const [setupData, setSetupData] = useState({ card: "", profile: "", page: "", adAccount: "", subscription: "" });
 
@@ -127,7 +129,21 @@ export default function GraphPage() {
           <h1 className="text-3xl font-bold tracking-tight">Link Graph</h1>
           <p className="text-muted-foreground mt-1">แผนภาพความสัมพันธ์ระหว่างบัตรเครดิต บัญชีโฆษณา และบริการต่างๆ</p>
         </div>
-        <div className="flex gap-4">
+        <div className="flex gap-4 items-center">
+          <div className="flex bg-muted p-1 rounded-lg">
+            <button
+              onClick={() => setViewMode("graph")}
+              className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${viewMode === "graph" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              แผนภาพ (Graph)
+            </button>
+            <button
+              onClick={() => setViewMode("list")}
+              className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${viewMode === "list" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              แบบตาราง (List)
+            </button>
+          </div>
           <Dialog open={isSetupOpen} onOpenChange={setIsSetupOpen}>
             <DialogTrigger asChild>
               <Button className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white border-0">
@@ -253,26 +269,32 @@ export default function GraphPage() {
       </div>
 
       <div className="flex-1 border rounded-xl overflow-hidden bg-white shadow-sm flex flex-col">
-        {/* React Flow Canvas */}
-        <div className="flex-1 min-h-[400px]">
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            fitView
-            attributionPosition="bottom-right"
-          >
-            <Controls />
-            <MiniMap />
-            <Background gap={12} size={1} />
-          </ReactFlow>
-        </div>
+        {viewMode === "graph" ? (
+          <div className="flex-1 min-h-[400px]">
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
+              fitView
+              attributionPosition="bottom-right"
+            >
+              <Controls />
+              <MiniMap />
+              <Background gap={12} size={1} />
+            </ReactFlow>
+          </div>
+        ) : (
+          <div className="flex-1 overflow-hidden h-full">
+            <LinkListView cards={cards || []} entities={entities || []} links={links || []} />
+          </div>
+        )}
       </div>
       
       {/* Table view at bottom */}
-      <div className="mt-8 bg-white rounded-lg border shadow-sm overflow-hidden shrink-0">
-        <table className="w-full text-sm text-left">
+      {viewMode === "graph" && (
+        <div className="mt-8 bg-white rounded-lg border shadow-sm overflow-hidden shrink-0">
+          <table className="w-full text-sm text-left">
           <thead className="bg-slate-50 text-slate-500 border-b">
             <tr>
               <th className="px-6 py-3 font-medium">บัตรเครดิต</th>
@@ -306,6 +328,7 @@ export default function GraphPage() {
           </tbody>
         </table>
       </div>
+      )}
     </div>
   );
 }
