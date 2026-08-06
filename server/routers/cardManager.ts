@@ -60,13 +60,13 @@ export const cardManagerRouter = router({
   updateCard: protectedProcedure
     .input(z.object({
       id: z.number(),
-      cardName: z.string().optional(),
-      bankName: z.string().optional(),
-      cardNumber: z.string().optional(),
-      expiry: z.string().optional(),
-      cvv: z.string().optional(),
-      cardholderName: z.string().optional(),
-      linkedBankAccount: z.string().optional()
+      cardName: z.string().nullable().optional(),
+      bankName: z.string().nullable().optional(),
+      cardNumber: z.string().nullable().optional(),
+      expiry: z.string().nullable().optional(),
+      cvv: z.string().nullable().optional(),
+      cardholderName: z.string().nullable().optional(),
+      linkedBankAccount: z.string().nullable().optional()
     }))
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
@@ -137,11 +137,11 @@ export const cardManagerRouter = router({
       id: z.number(),
       name: z.string().optional(),
       type: z.enum(["page", "business_manager", "ad_account", "fb_profile", "subscription"]).optional(),
-      loginNote: z.string().optional(),
+      loginNote: z.string().nullable().optional(),
       status: z.enum(["active", "paused", "banned", "unknown"]).optional(),
-      notes: z.string().optional(),
-      fbPhoneNumber: z.string().optional(),
-      developerPhoneNumber: z.string().optional()
+      notes: z.string().nullable().optional(),
+      fbPhoneNumber: z.string().nullable().optional(),
+      developerPhoneNumber: z.string().nullable().optional()
     }))
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
