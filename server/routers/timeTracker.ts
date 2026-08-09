@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { router, protectedProcedure } from "../trpc";
+import { router, protectedProcedure } from "../_core/trpc";
 import { timeTrackerCategories, timeTrackerLogs } from "../../drizzle/schema";
 import { eq, and, sql } from "drizzle-orm";
-import { getDb } from "../../drizzle/db";
+import { getDb } from "../db";
 import { format } from "date-fns";
 
 export const timeTrackerRouter = router({
