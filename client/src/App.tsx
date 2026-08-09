@@ -23,6 +23,7 @@ import HabitOSPage from "@/pages/HabitOS";
 import LifeGoalsPage from "@/pages/LifeGoals";
 import BookSummariesPage from "@/pages/BookSummaries";
 import LoginPage from "@/pages/Login";
+import CardsPage from "@/pages/Cards";
 import EntitiesPage from "@/pages/Entities";
 import GraphPage from "@/pages/Graph";
 import TrackerPage from "@/pages/Tracker";
