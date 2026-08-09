@@ -32,9 +32,11 @@ export const timeTrackerRouter = router({
     return categories;
   }),
 
-  getTodayLogs: protectedProcedure.query(async ({ ctx }) => {
+  getTodayLogs: protectedProcedure
+    .input(z.object({ date: z.string().optional() }).optional())
+    .query(async ({ ctx, input }) => {
     const db = await getDb();
-    const today = format(new Date(), "yyyy-MM-dd");
+    const today = input?.date || format(new Date(), "yyyy-MM-dd");
     return db
       .select()
       .from(timeTrackerLogs)

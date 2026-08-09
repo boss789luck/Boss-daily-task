@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { trpc } from "@/lib/trpc";
 import { Play, Pause, Briefcase, Activity, TrendingUp, Cpu, Clock } from "lucide-react";
+import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import {
@@ -26,7 +27,8 @@ function formatDuration(seconds: number) {
 export default function TrackerPage() {
   const utils = trpc.useUtils();
   const { data: categories = [], isLoading: loadingCats } = trpc.timeTracker.getCategories.useQuery();
-  const { data: todayLogs = [], isLoading: loadingLogs } = trpc.timeTracker.getTodayLogs.useQuery();
+  const localDate = format(new Date(), "yyyy-MM-dd");
+  const { data: todayLogs = [], isLoading: loadingLogs } = trpc.timeTracker.getTodayLogs.useQuery({ date: localDate });
   const { data: stats, isLoading: loadingStats } = trpc.timeTracker.getAllTimeStats.useQuery();
   
   const logTimeMutation = trpc.timeTracker.logTime.useMutation({
@@ -56,7 +58,7 @@ export default function TrackerPage() {
   // Sync session to DB occasionally (every 30 seconds) to prevent data loss, or on stop.
   useEffect(() => {
     if (activeTimerId !== null && sessionSeconds > 0 && sessionSeconds % 30 === 0) {
-      logTimeMutation.mutate({ categoryId: activeTimerId, durationSeconds: 30 });
+      logTimeMutation.mutate({ categoryId: activeTimerId, durationSeconds: 30, date: localDate });
       // Reset session seconds because we've persisted them
       setSessionSeconds(0);
     }
@@ -66,14 +68,14 @@ export default function TrackerPage() {
     if (activeTimerId === categoryId) {
       // Pause
       if (sessionSeconds > 0) {
-        logTimeMutation.mutate({ categoryId, durationSeconds: sessionSeconds });
+        logTimeMutation.mutate({ categoryId, durationSeconds: sessionSeconds, date: localDate });
       }
       setActiveTimerId(null);
       setSessionSeconds(0);
     } else {
       // Switch or Start
       if (activeTimerId !== null && sessionSeconds > 0) {
-        logTimeMutation.mutate({ categoryId: activeTimerId, durationSeconds: sessionSeconds });
+        logTimeMutation.mutate({ categoryId: activeTimerId, durationSeconds: sessionSeconds, date: localDate });
       }
       setActiveTimerId(categoryId);
       setSessionSeconds(0);
