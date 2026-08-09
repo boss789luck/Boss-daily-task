@@ -45,6 +45,7 @@ const navItems = [
   { href: "/life-goals", icon: Sparkles, label: "Life Goals", section: "review" },
   { href: "/books", icon: BookOpen, label: "Book Summaries", section: "knowledge" },
   { href: "/weekly-review", icon: Target, label: "Weekly Review", section: "review" },
+  { href: "/tracker", icon: Clock, label: "Time Tracker", section: "tools" },
   { href: "/cards", icon: CreditCard, label: "Cards Vault", section: "tools" },
   { href: "/entities", icon: Layers, label: "Ads Entities", section: "tools" },
   { href: "/graph", icon: Grid3X3, label: "Link Graph", section: "tools" },

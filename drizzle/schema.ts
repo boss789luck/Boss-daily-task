@@ -424,3 +424,31 @@ export const cardEntityLinks = sqliteTable("card_entity_links", {
 });
 export type CardEntityLink = typeof cardEntityLinks.$inferSelect;
 export type InsertCardEntityLink = typeof cardEntityLinks.$inferInsert;
+
+// ─── Time Tracker ─────────────────────────────────────────────────────────────
+export const timeTrackerCategories = sqliteTable("time_tracker_categories", {
+  id: integer("id", { mode: 'number' }).primaryKey({ autoIncrement: true }),
+  userId: integer("userId").notNull(),
+  name: text("name").notNull(),
+  icon: text("icon").default("clock").notNull(),
+  color: text("color").default("#6366f1").notNull(),
+  goalMinutesPerDay: integer("goalMinutesPerDay").default(60).notNull(),
+  sortOrder: integer("sortOrder").default(0).notNull(),
+  createdAt: integer("createdAt", { mode: 'timestamp' }).default(sql`(strftime('%s', 'now'))`).notNull(),
+  updatedAt: integer("updatedAt", { mode: 'timestamp' }).default(sql`(strftime('%s', 'now'))`).notNull(),
+});
+export type TimeTrackerCategory = typeof timeTrackerCategories.$inferSelect;
+export type InsertTimeTrackerCategory = typeof timeTrackerCategories.$inferInsert;
+
+export const timeTrackerLogs = sqliteTable("time_tracker_logs", {
+  id: integer("id", { mode: 'number' }).primaryKey({ autoIncrement: true }),
+  userId: integer("userId").notNull(),
+  categoryId: integer("categoryId").notNull(),
+  logDate: text("logDate").notNull(), // YYYY-MM-DD
+  durationSeconds: integer("durationSeconds").default(0).notNull(),
+  createdAt: integer("createdAt", { mode: 'timestamp' }).default(sql`(strftime('%s', 'now'))`).notNull(),
+  updatedAt: integer("updatedAt", { mode: 'timestamp' }).default(sql`(strftime('%s', 'now'))`).notNull(),
+});
+export type TimeTrackerLog = typeof timeTrackerLogs.$inferSelect;
+export type InsertTimeTrackerLog = typeof timeTrackerLogs.$inferInsert;
+

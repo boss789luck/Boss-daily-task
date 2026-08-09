@@ -23,9 +23,9 @@ import HabitOSPage from "@/pages/HabitOS";
 import LifeGoalsPage from "@/pages/LifeGoals";
 import BookSummariesPage from "@/pages/BookSummaries";
 import LoginPage from "@/pages/Login";
-import CardsPage from "@/pages/Cards";
 import EntitiesPage from "@/pages/Entities";
 import GraphPage from "@/pages/Graph";
+import TrackerPage from "@/pages/Tracker";
 import { TaskSyncBridge } from "./components/TaskSyncBridge";
 
 function Router() {
@@ -53,10 +53,10 @@ function Router() {
               <Route path="/settings/calendar" component={CalendarSettingsPage} />
               <Route path="/habits" component={HabitOSPage} />
               <Route path="/life-goals" component={LifeGoalsPage} />
-              <Route path="/books" component={BookSummariesPage} />
               <Route path="/cards" component={CardsPage} />
               <Route path="/entities" component={EntitiesPage} />
               <Route path="/graph" component={GraphPage} />
+              <Route path="/tracker" component={TrackerPage} />
               <Route path="/404" component={NotFound} />
               <Route component={NotFound} />
             </Switch>

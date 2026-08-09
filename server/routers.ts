@@ -39,10 +39,12 @@ import { eq, and } from "drizzle-orm";
 import { listUserCalendars, pushTaskToCalendar, pushProjectToCalendar, refreshGoogleToken, autoSyncTask, autoDeleteTask, autoSyncProject, autoDeleteProject, pullFromGoogleCalendar } from "./googleCalendar";
 import { taskEventBus, type TaskChangedEvent } from "./services/taskService";
 import { createTaskAndSync, updateTaskAndSync, deleteTaskAndSync, toggleTaskDoneAndSync, restoreTaskAndSync } from "./services/taskService";
+import { getDashboardStats, getTasksDueToday, getOverdueTasks } from "./services/dashboardService";
 import { habitsRouter } from "./routers/habits";
 import { lifeGoalsRouter } from "./routers/lifeGoals";
 import { bookSummariesRouter } from "./routers/bookSummaries";
 import { cardManagerRouter } from "./routers/cardManager";
+import { timeTrackerRouter } from "./routers/timeTracker";
 
 // ─── Shared Zod schemas ───────────────────────────────────────────────────────
 const areaInput = z.object({
@@ -616,6 +618,7 @@ export const appRouter = router({
   lifeGoals: lifeGoalsRouter,
   bookSummaries: bookSummariesRouter,
   cardManager: cardManagerRouter,
+  timeTracker: timeTrackerRouter,
 });
 
 // ─── CSV Parser ───────────────────────────────────────────────────────────────
