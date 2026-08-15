@@ -38,6 +38,7 @@ const navItems = [
   { href: "/projects", icon: FolderOpen, label: "Projects", section: "workspace" },
   { href: "/tasks", icon: Target, label: "Tasks", section: "workspace" },
   { href: "/calendar", icon: Calendar, label: "Calendar", section: "views" },
+  { href: "/external-calendar", icon: Calendar, label: "Google Calendar", section: "views" },
   { href: "/timeline", icon: BarChart3, label: "Timeline", section: "views" },
   { href: "/eisenhower", icon: Grid3X3, label: "Priority Matrix", section: "views" },
   { href: "/notes", icon: BookOpen, label: "Notes", section: "knowledge" },

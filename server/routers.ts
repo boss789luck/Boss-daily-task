@@ -36,7 +36,7 @@ import {
 import { getDb } from "./db";
 import { areas, notes, projects, tasks, calendarSettings, taskSyncOutbox } from "../drizzle/schema";
 import { eq, and } from "drizzle-orm";
-import { listUserCalendars, pushTaskToCalendar, pushProjectToCalendar, refreshGoogleToken, autoSyncTask, autoDeleteTask, autoSyncProject, autoDeleteProject, pullFromGoogleCalendar } from "./googleCalendar";
+import { listUserCalendars, pushTaskToCalendar, pushProjectToCalendar, refreshGoogleToken, autoSyncTask, autoDeleteTask, autoSyncProject, autoDeleteProject, pullFromGoogleCalendar, gcalRequest } from "./googleCalendar";
 import { taskEventBus, type TaskChangedEvent } from "./services/taskService";
 import { createTaskAndSync, updateTaskAndSync, deleteTaskAndSync, toggleTaskDoneAndSync, restoreTaskAndSync } from "./services/taskService";
 import { habitsRouter } from "./routers/habits";
@@ -367,6 +367,44 @@ export const appRouter = router({
     listCalendars: protectedProcedure.query(async ({ ctx }) => {
       return listUserCalendars(ctx.user.id);
     }),
+
+    // Get events for a specific Google Calendar
+    getEvents: protectedProcedure
+      .input(z.object({
+        calendarId: z.string().min(1),
+        timeMin: z.string(),
+        timeMax: z.string(),
+      }))
+      .query(async ({ ctx, input }) => {
+        try {
+          const encodedId = encodeURIComponent(input.calendarId);
+          const data = await gcalRequest(
+            ctx.user.id,
+            "GET",
+            `/calendars/${encodedId}/events?timeMin=${encodeURIComponent(input.timeMin)}&timeMax=${encodeURIComponent(input.timeMax)}&singleEvents=true&orderBy=startTime`
+          );
+          if (!data || !data.items) return [];
+
+          return data.items.map((e: any) => {
+            const start = e.start?.dateTime || e.start?.date;
+            const end = e.end?.dateTime || e.end?.date;
+            const isAllDay = !!e.start?.date;
+            return {
+              id: e.id,
+              title: e.summary || "(No title)",
+              start,
+              end,
+              isAllDay,
+              description: e.description,
+              location: e.location,
+              htmlLink: e.htmlLink,
+            };
+          });
+        } catch (e) {
+          console.error(`[Google Calendar] getEvents error for user ${ctx.user.id}, calendar ${input.calendarId}:`, e);
+          throw new Error("Failed to fetch events from Google Calendar");
+        }
+      }),
 
     // Disconnect Google Calendar (clear tokens)
     disconnect: protectedProcedure.mutation(async ({ ctx }) => {

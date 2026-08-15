@@ -13,7 +13,8 @@ import AreaDetailPage from "./pages/AreaDetail";
 import ProjectsPage from "./pages/Projects";
 import ProjectDetailPage from "./pages/ProjectDetail";
 import TasksPage from "./pages/Tasks";
-import CalendarPage from "./pages/Calendar";
+import CalendarPage from "@/pages/Calendar";
+import ExternalCalendarPage from "@/pages/ExternalCalendar";
 import TimelinePage from "./pages/Timeline";
 import NotesPage from "./pages/Notes";
 import WeeklyReviewPage from "./pages/WeeklyReview";
@@ -47,6 +48,7 @@ function Router() {
               <Route path="/projects/:id" component={ProjectDetailPage} />
               <Route path="/tasks" component={TasksPage} />
               <Route path="/calendar" component={CalendarPage} />
+              <Route path="/external-calendar" component={ExternalCalendarPage} />
               <Route path="/timeline" component={TimelinePage} />
               <Route path="/notes" component={NotesPage} />
               <Route path="/weekly-review" component={WeeklyReviewPage} />
