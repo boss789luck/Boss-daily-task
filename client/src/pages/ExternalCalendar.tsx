@@ -4,7 +4,8 @@ import { Calendar as CalIcon, ChevronLeft, ChevronRight, GripVertical } from "lu
 import { Button } from "@/components/ui/button";
 import { useState, useMemo } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Check, CalendarIcon as CalIconList } from "lucide-react";
 import {
   format, startOfMonth, endOfMonth, startOfWeek, endOfWeek,
   addDays, addMonths, subMonths, isSameMonth, isSameDay, isToday,
@@ -12,7 +13,7 @@ import {
 
 export default function ExternalCalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedCalendarId, setSelectedCalendarId] = useState<string | null>(null);
+  const [selectedCalendarIds, setSelectedCalendarIds] = useState<string[]>([]);
 
   // ─── Day events popover (for +N more) ─────────────────────────────────────────
   const [dayPopoverDate, setDayPopoverDate] = useState<Date | null>(null);
@@ -25,24 +26,30 @@ export default function ExternalCalendarPage() {
 
   // Set primary as default when calendars load
   useMemo(() => {
-    if (!selectedCalendarId && calendars.length > 0) {
+    if (selectedCalendarIds.length === 0 && calendars.length > 0) {
       const primary = calendars.find((c: any) => c.primary) || calendars[0];
-      setSelectedCalendarId(primary.id);
+      setSelectedCalendarIds([primary.id]);
     }
-  }, [calendars, selectedCalendarId]);
+  }, [calendars, selectedCalendarIds.length]);
 
   // Fetch events for the selected calendar
   const { data: events = [], isLoading: loadingEvents } = trpc.googleCalendar.getEvents.useQuery(
     {
-      calendarId: selectedCalendarId || "",
+      calendarIds: selectedCalendarIds,
       timeMin: rangeStart.toISOString(),
       timeMax: rangeEnd.toISOString(),
     },
     {
-      enabled: !!selectedCalendarId,
+      enabled: selectedCalendarIds.length > 0,
       staleTime: 60 * 1000,
     }
   );
+
+  const toggleCalendar = (id: string) => {
+    setSelectedCalendarIds(prev => 
+      prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]
+    );
+  };
 
   const navigate = (dir: 1 | -1) => {
     setCurrentDate(dir === 1 ? addMonths(currentDate, 1) : subMonths(currentDate, 1));
@@ -187,19 +194,38 @@ export default function ExternalCalendarPage() {
           {loadingCalendars ? (
             <div className="text-sm text-muted-foreground">Loading calendars...</div>
           ) : calendars.length > 0 ? (
-            <Select
-              value={selectedCalendarId || ""}
-              onValueChange={setSelectedCalendarId}
-            >
-              <SelectTrigger className="w-[200px] h-9">
-                <SelectValue placeholder="Select calendar" />
-              </SelectTrigger>
-              <SelectContent>
-                {calendars.map((c: any) => (
-                  <SelectItem key={c.id} value={c.id}>{c.summary}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="w-[240px] justify-between font-normal">
+                  <span className="truncate">
+                    {selectedCalendarIds.length === 0 ? "Select calendars..." 
+                      : selectedCalendarIds.length === 1 
+                        ? calendars.find((c: any) => c.id === selectedCalendarIds[0])?.summary || "1 calendar selected"
+                        : `${selectedCalendarIds.length} calendars selected`}
+                  </span>
+                  <CalIconList className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-[280px]" align="end">
+                <DropdownMenuLabel>Select Calendars</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <div className="max-h-[300px] overflow-y-auto">
+                  {calendars.map((c: any) => (
+                    <DropdownMenuCheckboxItem
+                      key={c.id}
+                      checked={selectedCalendarIds.includes(c.id)}
+                      onCheckedChange={() => toggleCalendar(c.id)}
+                      className="cursor-pointer"
+                    >
+                      <div className="flex flex-col gap-0.5 max-w-[220px]">
+                        <span className="truncate font-medium">{c.summary}</span>
+                        {c.primary && <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Primary</span>}
+                      </div>
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
             <div className="text-sm text-muted-foreground">No calendars found (Check Settings)</div>
           )}

@@ -368,41 +368,51 @@ export const appRouter = router({
       return listUserCalendars(ctx.user.id);
     }),
 
-    // Get events for a specific Google Calendar
+    // Get events for specific Google Calendars
     getEvents: protectedProcedure
       .input(z.object({
-        calendarId: z.string().min(1),
+        calendarIds: z.array(z.string()),
         timeMin: z.string(),
         timeMax: z.string(),
       }))
       .query(async ({ ctx, input }) => {
         try {
-          const encodedId = encodeURIComponent(input.calendarId);
-          const data = await gcalRequest(
-            ctx.user.id,
-            "GET",
-            `/calendars/${encodedId}/events?timeMin=${encodeURIComponent(input.timeMin)}&timeMax=${encodeURIComponent(input.timeMax)}&singleEvents=true&orderBy=startTime`
-          );
-          if (!data || !data.items) return [];
+          if (!input.calendarIds.length) return [];
+          
+          const allEvents = await Promise.all(
+            input.calendarIds.map(async (calId) => {
+              const encodedId = encodeURIComponent(calId);
+              const data = await gcalRequest(
+                ctx.user.id,
+                "GET",
+                `/calendars/${encodedId}/events?timeMin=${encodeURIComponent(input.timeMin)}&timeMax=${encodeURIComponent(input.timeMax)}&singleEvents=true&orderBy=startTime`
+              );
+              
+              if (!data || !data.items) return [];
 
-          return data.items.map((e: any) => {
-            const start = e.start?.dateTime || e.start?.date;
-            const end = e.end?.dateTime || e.end?.date;
-            const isAllDay = !!e.start?.date;
-            return {
-              id: e.id,
-              title: e.summary || "(No title)",
-              start,
-              end,
-              isAllDay,
-              description: e.description,
-              location: e.location,
-              htmlLink: e.htmlLink,
-            };
-          });
+              return data.items.map((e: any) => {
+                const start = e.start?.dateTime || e.start?.date;
+                const end = e.end?.dateTime || e.end?.date;
+                const isAllDay = !!e.start?.date;
+                return {
+                  id: e.id,
+                  title: e.summary || "(No title)",
+                  start,
+                  end,
+                  isAllDay,
+                  description: e.description,
+                  location: e.location,
+                  htmlLink: e.htmlLink,
+                  calendarId: calId,
+                };
+              });
+            })
+          );
+          
+          return allEvents.flat();
         } catch (e) {
-          console.error(`[Google Calendar] getEvents error for user ${ctx.user.id}, calendar ${input.calendarId}:`, e);
-          throw new Error("Failed to fetch events from Google Calendar");
+          console.error(`[Google Calendar] getEvents error for user ${ctx.user.id}, calendars ${input.calendarIds}:`, e);
+          throw new Error("Failed to fetch events from Google Calendars");
         }
       }),
 
