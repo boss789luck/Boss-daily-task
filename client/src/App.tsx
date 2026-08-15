@@ -5,6 +5,7 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { PinProvider } from "./contexts/PinContext";
+import { TimeTrackerProvider } from "./contexts/TimeTrackerContext";
 import BossLayout from "./components/BossLayout";
 import Dashboard from "./pages/Dashboard";
 import AreasPage from "./pages/Areas";
@@ -74,8 +75,10 @@ function App() {
       <ThemeProvider defaultTheme="light" switchable>
         <TooltipProvider>
           <PinProvider>
-            <Toaster position="bottom-right" />
-            <Router />
+            <TimeTrackerProvider>
+              <Toaster position="bottom-right" />
+              <Router />
+            </TimeTrackerProvider>
           </PinProvider>
         </TooltipProvider>
       </ThemeProvider>

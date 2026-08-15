@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import { trpc } from "@/lib/trpc";
 import { Play, Pause, Briefcase, Activity, TrendingUp, Cpu, Clock } from "lucide-react";
 import { format } from "date-fns";
+import { useTimeTracker } from "@/contexts/TimeTrackerContext";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import {
@@ -25,62 +26,12 @@ function formatDuration(seconds: number) {
 }
 
 export default function TrackerPage() {
-  const utils = trpc.useUtils();
   const { data: categories = [], isLoading: loadingCats } = trpc.timeTracker.getCategories.useQuery();
   const localDate = format(new Date(), "yyyy-MM-dd");
   const { data: todayLogs = [], isLoading: loadingLogs } = trpc.timeTracker.getTodayLogs.useQuery({ date: localDate });
   const { data: stats, isLoading: loadingStats } = trpc.timeTracker.getAllTimeStats.useQuery();
   
-  const logTimeMutation = trpc.timeTracker.logTime.useMutation({
-    onSuccess: () => {
-      utils.timeTracker.getTodayLogs.invalidate();
-      utils.timeTracker.getAllTimeStats.invalidate();
-    },
-    onError: (err) => {
-      toast.error(`Error saving time: ${err.message}`);
-    }
-  });
-
-  const [activeTimerId, setActiveTimerId] = useState<number | null>(null);
-  const [sessionSeconds, setSessionSeconds] = useState(0);
-
-  // Handle timer ticks
-  useEffect(() => {
-    let interval: ReturnType<typeof setInterval>;
-    if (activeTimerId !== null) {
-      interval = setInterval(() => {
-        setSessionSeconds(s => s + 1);
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [activeTimerId]);
-
-  // Sync session to DB occasionally (every 30 seconds) to prevent data loss, or on stop.
-  useEffect(() => {
-    if (activeTimerId !== null && sessionSeconds > 0 && sessionSeconds % 30 === 0) {
-      logTimeMutation.mutate({ categoryId: activeTimerId, durationSeconds: 30, date: localDate });
-      // Reset session seconds because we've persisted them
-      setSessionSeconds(0);
-    }
-  }, [sessionSeconds, activeTimerId, logTimeMutation]);
-
-  const toggleTimer = (categoryId: number) => {
-    if (activeTimerId === categoryId) {
-      // Pause
-      if (sessionSeconds > 0) {
-        logTimeMutation.mutate({ categoryId, durationSeconds: sessionSeconds, date: localDate });
-      }
-      setActiveTimerId(null);
-      setSessionSeconds(0);
-    } else {
-      // Switch or Start
-      if (activeTimerId !== null && sessionSeconds > 0) {
-        logTimeMutation.mutate({ categoryId: activeTimerId, durationSeconds: sessionSeconds, date: localDate });
-      }
-      setActiveTimerId(categoryId);
-      setSessionSeconds(0);
-    }
-  };
+  const { activeTimerId, sessionSeconds, toggleTimer } = useTimeTracker();
 
   const getTrackedSeconds = (categoryId: number) => {
     const log = todayLogs.find(l => l.categoryId === categoryId);
