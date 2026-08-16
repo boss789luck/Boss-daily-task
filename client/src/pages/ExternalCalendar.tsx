@@ -13,7 +13,14 @@ import {
 
 export default function ExternalCalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedCalendarIds, setSelectedCalendarIds] = useState<string[]>([]);
+  const [selectedCalendarIds, setSelectedCalendarIds] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem("boss_os_external_calendars");
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
 
   // ─── Day events popover (for +N more) ─────────────────────────────────────────
   const [dayPopoverDate, setDayPopoverDate] = useState<Date | null>(null);
@@ -24,11 +31,17 @@ export default function ExternalCalendarPage() {
   // Fetch available calendars
   const { data: calendars = [], isLoading: loadingCalendars } = trpc.googleCalendar.listCalendars.useQuery();
 
-  // Set primary as default when calendars load
+  // Set primary as default when calendars load if nothing is selected
   useMemo(() => {
     if (selectedCalendarIds.length === 0 && calendars.length > 0) {
-      const primary = calendars.find((c: any) => c.primary) || calendars[0];
-      setSelectedCalendarIds([primary.id]);
+      // Check if we have anything in local storage first to prevent overwriting an intentionally empty state
+      // (Though usually we want at least one selected). If it's completely empty and no local storage, use primary.
+      const saved = localStorage.getItem("boss_os_external_calendars");
+      if (!saved || saved === "[]") {
+        const primary = calendars.find((c: any) => c.primary) || calendars[0];
+        setSelectedCalendarIds([primary.id]);
+        localStorage.setItem("boss_os_external_calendars", JSON.stringify([primary.id]));
+      }
     }
   }, [calendars, selectedCalendarIds.length]);
 
@@ -46,9 +59,11 @@ export default function ExternalCalendarPage() {
   );
 
   const toggleCalendar = (id: string) => {
-    setSelectedCalendarIds(prev => 
-      prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]
-    );
+    setSelectedCalendarIds(prev => {
+      const next = prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id];
+      localStorage.setItem("boss_os_external_calendars", JSON.stringify(next));
+      return next;
+    });
   };
 
   const navigate = (dir: 1 | -1) => {
