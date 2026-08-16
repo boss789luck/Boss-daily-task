@@ -230,6 +230,7 @@ export default function ExternalCalendarPage() {
                       key={c.id}
                       checked={selectedCalendarIds.includes(c.id)}
                       onCheckedChange={() => toggleCalendar(c.id)}
+                      onSelect={(e) => e.preventDefault()}
                       className="cursor-pointer"
                     >
                       <div className="flex flex-col gap-0.5 max-w-[220px]">
