@@ -33,7 +33,7 @@ const renderCustomizedLabel = ({ cx, cy, midAngle, outerRadius, percent, name, v
   const textAnchor = x > cx ? 'start' : 'end';
 
   return (
-    <text x={x} y={y} fill={fill} textAnchor={textAnchor} dominantBaseline="central" className="text-xs font-semibold">
+    <text x={x} y={y} fill="#475569" textAnchor={textAnchor} dominantBaseline="central" className="text-xs font-semibold drop-shadow-sm">
       {`${name}: ${value}h (${(percent * 100).toFixed(0)}%)`}
     </text>
   );
@@ -67,14 +67,16 @@ export default function TrackerPage() {
 
   const allTimeChartData = useMemo(() => {
     if (!stats || !stats.allTime) return [];
-    return stats.allTime.map(stat => {
-      const cat = categories.find(c => c.id === stat.categoryId);
-      return {
-        name: cat ? cat.name : "Unknown",
-        value: parseFloat((stat.totalSeconds / 3600).toFixed(2)),
-        color: cat ? cat.color : "#94a3b8"
-      };
-    });
+    return stats.allTime
+      .filter(stat => stat.totalSeconds > 0) // Hide 0 value to prevent overlapping labels
+      .map(stat => {
+        const cat = categories.find(c => c.id === stat.categoryId);
+        return {
+          name: cat ? cat.name : "Unknown",
+          value: parseFloat((stat.totalSeconds / 3600).toFixed(2)),
+          color: cat ? cat.color : "#94a3b8"
+        };
+      });
   }, [stats, categories]);
 
   if (loadingCats || loadingLogs || loadingStats) {
