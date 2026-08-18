@@ -25,6 +25,20 @@ function formatDuration(seconds: number) {
   return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
 }
 
+const renderCustomizedLabel = ({ cx, cy, midAngle, outerRadius, percent, name, value, fill }: any) => {
+  const RADIAN = Math.PI / 180;
+  const radius = outerRadius * 1.15;
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+  const textAnchor = x > cx ? 'start' : 'end';
+
+  return (
+    <text x={x} y={y} fill={fill} textAnchor={textAnchor} dominantBaseline="central" className="text-xs font-semibold">
+      {`${name}: ${value}h (${(percent * 100).toFixed(0)}%)`}
+    </text>
+  );
+};
+
 export default function TrackerPage() {
   const { data: categories = [], isLoading: loadingCats } = trpc.timeTracker.getCategories.useQuery();
   const localDate = format(new Date(), "yyyy-MM-dd");
@@ -169,11 +183,12 @@ export default function TrackerPage() {
                   data={allTimeChartData}
                   cx="50%"
                   cy="50%"
-                  innerRadius={80}
-                  outerRadius={110}
+                  innerRadius={60}
+                  outerRadius={90}
                   paddingAngle={5}
                   dataKey="value"
-                  label={({name, percent}) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  label={renderCustomizedLabel}
+                  labelLine={{ stroke: '#888', strokeWidth: 1 }}
                 >
                   {allTimeChartData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
